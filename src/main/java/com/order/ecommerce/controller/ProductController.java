@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -44,6 +47,22 @@ public class ProductController {
     public ProductDto findProductById(@PathVariable(name = "productId") String productId) {
         validateArgument(productId == null || productId.isEmpty(), "Product Id cannot be null or empty");
         return productService.findProductById(productId);
+    }
+
+    @GetMapping("/search")
+    public List<ProductDto> search(@RequestParam(value = "title", required = false) String title,
+                                   @RequestParam(value = "description", required = false) String description,
+                                   @RequestParam(value = "minPrice", required = false) Double minPrice,
+                                   @RequestParam(value = "maxPrice", required = false) Double maxPrice) {
+        if (title != null) {
+            return productService.findByTitle(title);
+        } else if (description != null) {
+            return productService.findByDescription(description);
+        } else if (minPrice != null && maxPrice != null) {
+            return productService.findByPriceBetween(minPrice, maxPrice);
+        } else {
+            return productService.findAll();
+        }
     }
 
     private void validateArgument(ProductDto productDto) {

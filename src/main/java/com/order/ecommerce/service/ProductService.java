@@ -57,4 +57,51 @@ public class ProductService implements IProductService {
         return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ProductDto> findByTitle(String title){
+        log.info("Finding products for title = {}", title);
+        List<Product> productList = productRepository.findByTitleIgnoreCaseContaining(title);
+        if (productList == null || productList.isEmpty()) {
+            log.info("No product(s) found for name = {}", title);
+            return null;
+        }
+        log.info("Successfully found {} products", productList.size());
+        return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findByDescription(String description) {
+        log.info("Finding products for description = {}", description);
+        List<Product> productList = productRepository.findByDescriptionContainingIgnoreCase(description);
+        if (productList == null || productList.isEmpty()) {
+            log.info("No product(s) found for description = {}", description);
+            return null;
+        }
+        log.info("Successfully found {} products", productList.size());
+        return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findByPriceBetween(Double minPrice, Double maxPrice) {
+        log.info("Finding products for minPrice and maxPrice = {}", minPrice, maxPrice);
+        List<Product> productList = productRepository.findByPriceBetween(minPrice,maxPrice);
+        if (productList == null || productList.isEmpty()) {
+            log.info("No product(s) found for price = {}", minPrice, maxPrice);
+            return null;
+        }
+        log.info("Successfully found {} products", productList.size());
+        return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDto> findAll() {
+        List<Product> productList = productRepository.findAll();
+        if (productList == null || productList.isEmpty()) {
+            log.info("No product(s) found ");
+            return null;
+        }
+        log.info("Successfully found {} products", productList.size());
+        return productList.stream().map(product -> productMapper.toProductDto(product)).collect(Collectors.toList());
+    }
+
 }
